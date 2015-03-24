@@ -16,11 +16,14 @@
 
 package fi.Huulivoide.JIconManager;
 
+import org.omg.CORBA.portable.InputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.ImageIcon;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.*;
 import java.util.HashMap;
 
@@ -133,6 +136,10 @@ public class JIconManager
     public boolean loadSystemTheme(String themeName) throws MalformedIconThemeFileException, ThemeNotFoundException
     {
         Theme oldTheme = systemTheme;
+
+        if (themeName == DEFAULT_THEME)
+            themeName = getDefaultTheme();
+
         Path themePath = systemThemes.get(themeName);
 
         if (themePath == null)
@@ -313,6 +320,41 @@ public class JIconManager
            log.warn("An error happened while trying to list themes installed in '{}. " +
                     "Error: {}", iconsDirectoryRoot.toString(), e.getMessage());
        }
+    }
+
+
+    private String getDconfTheme()
+    {
+        String result = null;
+
+        try
+        {
+            Process dconfProcess = Runtime.getRuntime().exec("dconf /org/gnome/desktop/interface/icon-theme");
+            BufferedReader resultStream = new BufferedReader(new InputStreamReader(dconfProcess.getInputStream()));
+
+            result = resultStream.readLine();
+        }
+        catch (IOException e)
+        {
+            log.info("Could not determinate default theme from dconf. Reason: " + e.getMessage());
+        }
+
+        if (result != null && result.length() > 0)
+        {
+            result = result.substring(1, result.length() - 1);
+        }
+
+        return result;
+    }
+
+    private String getDefaultTheme()
+    {
+        String theme = getDconfTheme();
+
+        if (theme == null)
+            theme = DEFAULT_THEME;
+
+        return theme;
     }
 
     private ImageIcon getFromResources(String name, int size)
