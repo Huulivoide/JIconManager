@@ -115,7 +115,7 @@ public class JIconManager
             loadSystemTheme(systemThemeName);
 
 
-        applicationTheme = new Theme(applicationThemeFile);
+        applicationTheme = new Theme(applicationThemeFile, false);
 
     }
 
@@ -148,7 +148,7 @@ public class JIconManager
 
         try
         {
-            systemTheme = new Theme(themePath);
+            systemTheme = new Theme(themePath, true);
         }
         catch (MalformedIconThemeFileException e)
         {

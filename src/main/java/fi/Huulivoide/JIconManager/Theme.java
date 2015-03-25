@@ -41,7 +41,7 @@ class Theme
     //    region Public    //
     /////////////////////////
 
-    public Theme(Path themeFile) throws MalformedIconThemeFileException
+    public Theme(Path themeFile, boolean isSystemTheme) throws MalformedIconThemeFileException
     {
         inheritedThemes = new ArrayList<>();
         icons = new HashMap<>();
@@ -78,7 +78,8 @@ class Theme
             // All themes with the exception of Hicolor can inherit other themes.
             // Hicolor is inherited always, even if the theme doesn't specify it
             // Hicolor itself is naturally an exception.
-            if (name != HICOLOR_ICON_THEME_NAME)
+            // Application theme inheritance is not supported
+            if (name != HICOLOR_ICON_THEME_NAME && isSystemTheme)
                inheritThemes(infoSection, themeFile);
 
 
@@ -290,7 +291,7 @@ class Theme
                 {
                     Path themePath = JIconManager.getSystemTheme(inheritedTheme);
                     if (themePath != null)
-                        inheritedThemes.add(new Theme(themePath));
+                        inheritedThemes.add(new Theme(themePath, true));
                 }
                 catch (MalformedIconThemeFileException e)
                 {
