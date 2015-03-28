@@ -26,11 +26,10 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.FileSystem;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.charset.Charset;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -48,12 +47,10 @@ class Theme
 
         Path rootPath = themeFile.getParent();
         name = rootPath.getFileName().toString();
-        if (name.equals(HICOLOR_ICON_THEME_NAME))
-            name = HICOLOR_ICON_THEME_NAME;
 
         try
         {
-            Ini themeData = new Ini(themeFile.toUri().toURL());
+            Ini themeData = new Ini(Files.newBufferedReader(themeFile, Charset.forName("UTF-8")));
 
             // Try to open the theme's info section
             Ini.Section infoSection = themeData.get("Icon Theme");
@@ -79,7 +76,7 @@ class Theme
             // Hicolor is inherited always, even if the theme doesn't specify it
             // Hicolor itself is naturally an exception.
             // Application theme inheritance is not supported
-            if (name != HICOLOR_ICON_THEME_NAME && isSystemTheme)
+            if (name.equals(HICOLOR_ICON_THEME_NAME) && isSystemTheme)
                inheritThemes(infoSection, themeFile);
 
 
@@ -362,7 +359,7 @@ class Theme
         {
             try
             {
-                BufferedImage iconImg = ImageIO.read(iconFile.toUri().toURL());
+                BufferedImage iconImg = ImageIO.read(Files.newInputStream(iconFile, StandardOpenOption.READ));
 
                 if (biggest != ThemeIcon.SCALABLE)
                 {
