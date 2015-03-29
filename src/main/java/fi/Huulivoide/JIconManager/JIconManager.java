@@ -201,9 +201,9 @@ public class JIconManager
         ImageIcon icon = null;
 
         if (systemTheme != null)
-            icon = getSystemIcon(name, size);
+            icon = systemTheme.getIcon(name, size);
         if (icon == null)
-            icon = getFromResources(name, size);
+            icon = applicationTheme.getIcon(name, size);;
 
         return icon;
     }
@@ -407,16 +407,6 @@ public class JIconManager
             theme = DEFAULT_THEME;
 
         return theme;
-    }
-
-    private ImageIcon getFromResources(String name, int size)
-    {
-        return applicationTheme.getIcon(name, size);
-    }
-
-    private ImageIcon getSystemIcon(String name, int size)
-    {
-        return systemTheme.getIcon(name, size);
     }
 
 
