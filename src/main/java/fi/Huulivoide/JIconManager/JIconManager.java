@@ -365,13 +365,18 @@ public class JIconManager
     }
 
 
+    /**
+     * Try to get user's default icon theme from Gnome 3's DConf.
+     *
+     * @return icon-theme name or null if not found
+     */
     private String getDconfTheme()
     {
         String result = null;
 
         try
         {
-            Process dconfProcess = Runtime.getRuntime().exec("dconf /org/gnome/desktop/interface/icon-theme");
+            Process dconfProcess = Runtime.getRuntime().exec("dconf read /org/gnome/desktop/interface/icon-theme");
             BufferedReader resultStream = new BufferedReader(new InputStreamReader(dconfProcess.getInputStream()));
 
             result = resultStream.readLine();
