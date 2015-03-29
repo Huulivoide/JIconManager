@@ -28,6 +28,16 @@ import java.nio.file.*;
 import java.util.HashMap;
 
 /**
+ * JIconManager allows you to easily access all of the icons you have bundled
+ * with your application. If the icon naming scheme matches Freedesktop's
+ * <a href="http://standards.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html">
+ * Icon Naming specification</a> JIconManager can load the icons from a systemwide icon theme.
+ *
+ * In Linux nearly every single application uses the same icons, which quarantines consistent
+ * look in every application. Java's Swing sadly has no build-in support for these icon themes.
+ * JIconManager fixes that problem, making your Swing applications first class citizens in
+ * any Linux system.
+ *
  * @author <a href="mailto:jesse.jaara@gmail.com">Jesse Jaara</a>
  * @version %I%
  */
@@ -206,6 +216,12 @@ public class JIconManager
     //  region Protected   //
     /////////////////////////
 
+    /**
+     * Return the path of the index.theme file for the named theme.
+     *
+     * @param themeName name of the theme
+     * @return Path to theme/index.theme
+     */
     protected static Path getSystemTheme(String themeName)
     {
         return systemThemes.get(themeName);
@@ -237,6 +253,13 @@ public class JIconManager
     private static final HashMap<String, Path> systemThemes = listInstalledThemes();
 
 
+    /**
+     * Construct to a path to icon directory obtained from an enviroinment variable like HOME or XDG_DATA_DIR
+     *
+     * @param variable name if the enviroinment variable
+     * @param path append to end of the variable
+     * @return Path object or null if variable is empty
+     */
     private static Path getPathFromEnviroinment(String variable, String path)
     {
         String VARIABLE = System.getenv(variable);
@@ -253,6 +276,11 @@ public class JIconManager
         return null;
     }
 
+    /**
+     * Check whether the system supports themes i.e is Linux or some BSD system
+     *
+     * @return true if supported, false if not
+     */
     private static boolean systemSupportsThemes()
     {
         String osName = System.getProperty("os.name");
@@ -261,6 +289,11 @@ public class JIconManager
         return (osName.equals("Linux") || osName.equals("FreeBSD") || osName.equals("OpenBSD"));
     }
 
+    /**
+     * Construct a list all themes installed systemwide or to user's home directory.
+     *
+     * @return list of installed themes
+     */
     private static HashMap<String, Path> listInstalledThemes()
     {
         HashMap<String, Path> foundThemes = new HashMap<>();
@@ -286,6 +319,15 @@ public class JIconManager
     }
 
 
+    /**
+     * Scan given directory for icon themes.
+     *
+     * Proceed to each direct subdirectory in the given path and look for a file
+     * name 'index.theme'.
+     *
+     * @param iconsDirectoryRoot path to themes-folder root
+     * @param foundThemes list of found icon themes
+     */
     private static void findThemesFromDirectory(Path iconsDirectoryRoot, HashMap<String, Path> foundThemes)
     {
        try (DirectoryStream<Path> rootStream = Files.newDirectoryStream(iconsDirectoryRoot))
@@ -347,6 +389,16 @@ public class JIconManager
         return result;
     }
 
+    /**
+     * Try to determinate user's default theme.
+     *
+     * Tries to solve the theme name from:
+     * <ol>
+     *     <li>DConf</li>
+     * </ol>
+     *
+     * @return
+     */
     private String getDefaultTheme()
     {
         String theme = getDconfTheme();

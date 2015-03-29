@@ -16,6 +16,10 @@
 
 package fi.Huulivoide.JIconManager;
 
+/**
+ * ThemeNotFoundException as the name says tells if the requested theme is not
+ * found in the system.
+ */
 public class ThemeNotFoundException extends Exception
 {
     //    region Public    //

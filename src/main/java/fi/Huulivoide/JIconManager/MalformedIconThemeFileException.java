@@ -16,14 +16,24 @@
 
 package fi.Huulivoide.JIconManager;
 
+/**
+ * MalformedIconThemeFileException tells that JIconManager tried to process a file that
+ * most likely isn't Freedesktop icon theme file. Or that it is so badly written that
+ * JIconManager cannot parse it fully.
+ */
 public class MalformedIconThemeFileException extends Exception
 {
     //    region Public    //
     /////////////////////////
 
-    public MalformedIconThemeFileException(String s)
+    /**
+     * Construct a new exception with certain message.
+     *
+     * @param message tells what is wrong with the file
+     */
+    public MalformedIconThemeFileException(String message)
     {
-        super(s);
+        super(message);
     }
 
     /////////////////////////
